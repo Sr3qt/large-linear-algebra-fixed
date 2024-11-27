@@ -1,4 +1,6 @@
 #include "SparseMatrix.h"
+#include "DenseMatrix.h"
+#include "VectorN.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/error_macros.hpp>
@@ -50,7 +52,7 @@ void SparseMatrix::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("norm_squared"), &SparseMatrix::norm_squared);
     ClassDB::bind_method(D_METHOD("norm"), &SparseMatrix::norm);
-    
+
 }
 
 Ref<SparseMatrix> SparseMatrix::identity(int size) {
@@ -118,7 +120,7 @@ void SparseMatrix::set_element(int row, int col, double value) {
         return;
     }
 
-    // set cell code here: iterator from the last element to the first element (reverse order), and place the record so that the list remains sorted (TODO: may see performance improvement with binary search - test this later). 
+    // set cell code here: iterator from the last element to the first element (reverse order), and place the record so that the list remains sorted (TODO: may see performance improvement with binary search - test this later).
     int end_iterator = values[row].size() - 1;
     for (;;) {
         if (end_iterator == -1) {
@@ -199,7 +201,7 @@ TypedArray<SparseMatrixCoordinate> SparseMatrix::to_coordinate_array() const {
 Ref<SparseMatrix> SparseMatrix::transposed() const {
     Ref<SparseMatrix> transposed;
     transposed.instantiate();
-    
+
     transposed->column_number = values.size();
     transposed->values.resize(column_number);
     transposed->reserve_per_row(8); // default to 8, so that reallocations are minimised. (though, more reallocations may occur, this reduces the number of them.)
@@ -343,7 +345,7 @@ Ref<DenseMatrix> SparseMatrix::multiply_dense(Ref<DenseMatrix> other) const {
     for (int row = 0; row < values.size(); row++) {
 		for (int col = 0; col < other->col_number; col++) {
 			double total = 0.0;
-			
+
 			for (auto& it : values[row]) {
 				total += it.val * other->values[other->col_number * it.column + col];
 			}
@@ -360,7 +362,7 @@ Ref<SparseMatrix> SparseMatrix::add_sparse(Ref<SparseMatrix> other) const {
 		ERR_PRINT_ED("ERROR: parameter is null.");
         Ref<SparseMatrix> null_ref;
         return null_ref;
-	}	
+	}
     if (unlikely(values.size() != other->values.size() || column_number != other->column_number)) {
         ERR_PRINT_ED("ERROR: cannot add matrices with dimensions that are not equal.");
         Ref<SparseMatrix> null_ref;
@@ -436,7 +438,7 @@ Ref<SparseMatrix> SparseMatrix::subtract_sparse(Ref<SparseMatrix> other) const {
 		ERR_PRINT_ED("ERROR: parameter is null.");
         Ref<SparseMatrix> null_ref;
         return null_ref;
-	}	
+	}
     if (unlikely(values.size() != other->values.size() || column_number != other->column_number)) {
         ERR_PRINT_ED("ERROR: cannot subtract matrices with dimensions that are not equal.");
         Ref<SparseMatrix> null_ref;

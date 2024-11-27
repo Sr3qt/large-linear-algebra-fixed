@@ -1,12 +1,13 @@
 #ifndef SPARSE_MATRIX_H
 #define SPARSE_MATRIX_H
 
-#include "DenseMatrix.h"
-#include "VectorN.h"
 #include <godot_cpp/classes/ref.hpp>
 #include <vector>
 
 namespace godot {
+
+class DenseMatrix;
+class VectorN;
 
 template<class T> class move_only : public T{
 public:
@@ -15,7 +16,7 @@ public:
    move_only(move_only&&) noexcept {};
    ~move_only() noexcept {};
 
-   using T::T;   
+   using T::T;
 }; /* Enforces the moving of std::vector when reallocating values, rather than copying */
 
 struct Value {
@@ -29,7 +30,7 @@ class SparseMatrixCoordinate : public RefCounted {
 private:
     int row = 0;
     int column = 0;
-    double value = 0.0; 
+    double value = 0.0;
 
 protected:
     static void _bind_methods();
@@ -69,7 +70,7 @@ class SparseMatrix : public RefCounted {
 private:
     int column_number = 0;
     std::vector<move_only<std::vector<Value>>> values; // values[row] => { value, column }
-    
+
 protected:
     static void _bind_methods();
 
@@ -86,7 +87,7 @@ public:
 
     // data manipulation methods
     void reserve_per_row(int number_columns_per_row);
-    void set_dimensions(int rows, int cols); 
+    void set_dimensions(int rows, int cols);
     Vector2i get_dimensions() const { return Vector2i(values.size(), column_number); }
     void set_element(int row, int col, double value);
     double get_element(int row, int col) const;

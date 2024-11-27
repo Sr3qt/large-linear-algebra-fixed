@@ -1,12 +1,13 @@
 #ifndef DENSE_MATRIX_H
 #define DENSE_MATRIX_H
 
-#include "SparseMatrix.h"
-#include "VectorN.h"
 #include <godot_cpp/classes/ref.hpp>
 #include <vector>
 
 namespace godot {
+
+class SparseMatrix;
+class VectorN;
 
 // Note: processed for row major
 class DenseMatrix : public RefCounted {
@@ -17,7 +18,7 @@ private:
 	int col_number = 0;
 
 	std::vector<double> values;
-    
+
     // helper functions for matrix internal manipulations
     _FORCE_INLINE_ void blit_rect_unsafe(const DenseMatrix& source, Rect2i src_rect, Vector2i dst); // x is the row, y is the column
     _FORCE_INLINE_ void blit_rect_unsafe_ref(Ref<DenseMatrix> source, Rect2i src_rect, Vector2i dst);
@@ -26,7 +27,6 @@ private:
     _FORCE_INLINE_ void add_row_multiple_after_col(int row_dest, int row_src, double multiple, int first_col);
     _FORCE_INLINE_ double& get_cell_unsafe(int row, int col) { return values[col_number * row + col]; };
 
-    
 protected:
     static void _bind_methods();
 
@@ -43,7 +43,7 @@ public:
     static Ref<DenseMatrix> from_packed_array(const PackedFloat64Array& from, int rows, int columns);
 
     // data manipulation methods
-    void set_dimensions(int rows, int cols); 
+    void set_dimensions(int rows, int cols);
     Vector2i get_dimensions() const { return Vector2i(row_number, col_number); }
     void set_element(int row, int col, double value);
     double get_element(int row, int col) const;
@@ -70,9 +70,9 @@ public:
     void subtract_dense_in_place(Ref<DenseMatrix> other);
 
     // Solves: AX=B, where B is the parameter, and solves for X (for any matrix X, including column vectors, or rectangular), using Gaussian Elimination
-    Ref<DenseMatrix> solve(Ref<DenseMatrix> B) const; 
+    Ref<DenseMatrix> solve(Ref<DenseMatrix> B) const;
 
-    // Solve iteratively with the conjugate gradient method. This is guaranteed to converge for symmetric positive-definite matrices (but can often converge otherwise aswell). 
+    // Solve iteratively with the conjugate gradient method. This is guaranteed to converge for symmetric positive-definite matrices (but can often converge otherwise aswell).
     // Note: it is relatively easy for end-users to create their own iterative solvers with the given functions, as the GDScript overhead is dominated by the matrix algebra.
     Ref<VectorN> solve_iterative_cg(Ref<VectorN> B, Ref<VectorN> initial_guess, int max_iterations) const;
 

@@ -1,18 +1,19 @@
 #ifndef VECTOR_N_H
 #define VECTOR_N_H
 
-#include "DenseMatrix.h"
-#include "SparseMatrix.h"
 #include <godot_cpp/classes/ref.hpp>
 #include <vector>
 
 namespace godot {
 
+class SparseMatrix;
+class DenseMatrix;
+
 class VectorN : public RefCounted {
     GDCLASS(VectorN, RefCounted)
 
 private:
-    
+
 protected:
     static void _bind_methods();
 

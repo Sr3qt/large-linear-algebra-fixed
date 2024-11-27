@@ -1,3 +1,5 @@
+#include "SparseMatrix.h"
+#include "DenseMatrix.h"
 #include "VectorN.h"
 
 #include <godot_cpp/core/class_db.hpp>
@@ -6,7 +8,7 @@
 using namespace godot;
 
 void VectorN::_bind_methods() {
-	
+
 	ClassDB::bind_static_method("VectorN", D_METHOD("filled", "value", "size"), &VectorN::filled);
 	ClassDB::bind_static_method("VectorN", D_METHOD("from_packed_array", "from"), &VectorN::from_packed_array);
 
@@ -123,7 +125,7 @@ double VectorN::get_element(int idx) const {
 
 double VectorN::length_squared() const {
 	double total = 0.0;
-	
+
 	for (int i = 0; i < values.size(); i++) {
 		total += values[i] * values[i];
 	}

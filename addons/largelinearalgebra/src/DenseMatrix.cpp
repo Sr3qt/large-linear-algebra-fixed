@@ -1,4 +1,6 @@
+#include "SparseMatrix.h"
 #include "DenseMatrix.h"
+#include "VectorN.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/error_macros.hpp>
@@ -18,7 +20,7 @@ void DenseMatrix::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("transposed"), &DenseMatrix::transposed);
 	ClassDB::bind_method(D_METHOD("clone"), &DenseMatrix::clone);
 	ClassDB::bind_method(D_METHOD("to_sparse", "zero_threshold"), &DenseMatrix::to_sparse);
-	ClassDB::bind_method(D_METHOD("to_packed_array"), &DenseMatrix::to_packed_array);	
+	ClassDB::bind_method(D_METHOD("to_packed_array"), &DenseMatrix::to_packed_array);
 
 	ClassDB::bind_method(D_METHOD("multiply_dense", "other"), &DenseMatrix::multiply_dense);
 	ClassDB::bind_method(D_METHOD("multiply_sparse", "other"), &DenseMatrix::multiply_sparse);
@@ -49,7 +51,7 @@ void DenseMatrix::blit_rect_unsafe(const DenseMatrix& source, Rect2i src_rect, V
 	int copy_length = src_rect.size.y;
 	for (int row = 0; row < src_rect.size.x; row++) {
 		int source_row = src_rect.position.x + row;
-		int dest_row = dst.x + row; // destination 
+		int dest_row = dst.x + row; // destination
 		int source_col = src_rect.position.y;
 		int dest_col = dst.y;
 		memcpy(&values[col_number * dest_row + dest_col], &source.values[source.col_number * source_row + source_col], sizeof(double) * copy_length);
@@ -60,7 +62,7 @@ void DenseMatrix::blit_rect_unsafe_ref(Ref<DenseMatrix> source, Rect2i src_rect,
 	int copy_length = src_rect.size.y;
 	for (int row = 0; row < src_rect.size.x; row++) {
 		int source_row = src_rect.position.x + row;
-		int dest_row = dst.x + row; // destination 
+		int dest_row = dst.x + row; // destination
 		int source_col = src_rect.position.y;
 		int dest_col = dst.y;
 		memcpy(&values[col_number * dest_row + dest_col], &source->values[source->col_number * source_row + source_col], sizeof(double) * copy_length);
@@ -159,7 +161,7 @@ void DenseMatrix::set_dimensions(int rows, int cols) {
 	}
 	std::vector<double> new_values;
 	new_values.resize(rows * cols, 0.0);
-	
+
 	int row_copy_count = 0;
 	if (rows < row_number) {
 		row_copy_count = rows;
@@ -288,7 +290,7 @@ Ref<DenseMatrix> DenseMatrix::multiply_sparse(Ref<SparseMatrix> other) const {
 	for (int row = 0; row < row_number; row++) {
 		for (int col = 0; col < other->column_number; col++) {
 			double total = 0.0;
-			
+
 			for (auto& it : transposed->values[col]) {
 				total += it.val * values[col_number * row + it.column];
 			}
@@ -544,7 +546,7 @@ Ref<DenseMatrix> DenseMatrix::solve(Ref<DenseMatrix> B) const {
 
 	std::string return_string = "";
 	auto matrix_values = result->to_packed_array();
-	
+
 
 	for (int row = 0; row < row_number; row++) {
 		// step 1: search for the pivot element (greatest element), in rows including this, and above
@@ -613,7 +615,7 @@ Ref<DenseMatrix> DenseMatrix::inverse() const {
 		Ref<DenseMatrix> null_ref;
 		return null_ref;
 	}
-	
+
 	return solve(identity(row_number));
 }
 
